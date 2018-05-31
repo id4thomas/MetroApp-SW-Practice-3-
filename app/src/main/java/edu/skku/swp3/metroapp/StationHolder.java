@@ -21,12 +21,14 @@ public class StationHolder extends AsyncTask< Void, Void, Void> {
     HashMap<Integer,ArrayList<String>> stationorder;
     File mFile;
     int numlines;
+    Context ctxt;
     //ArrayList<String> stations;
     StationHolder(Context context){
         stationmap=new HashMap<>();
         stationorder=new HashMap<>();
-        File parent = context.getDataDir();
-        mFile = new File(parent,"db.csv");
+        ctxt=context;
+        //File parent = context.getDataDir();
+       /* mFile = new File(parent,"db.csv");
         if (!mFile.exists()) {
             try {
                 if (mFile.createNewFile()) {//파일 생성 시도
@@ -35,7 +37,7 @@ public class StationHolder extends AsyncTask< Void, Void, Void> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     public void addstation(String name,int lane){
@@ -55,72 +57,68 @@ public class StationHolder extends AsyncTask< Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         Log.i("Reading db", "background process for file read starts");
-        try {
-            Scanner sc = new Scanner(mFile);
-            StringTokenizer tokenizer;
-            //1. get number of lane infos
-            String line,stationname;
+        Scanner sc = new Scanner(ctxt.getResources().openRawResource(R.raw.db));
+        StringTokenizer tokenizer;
+        //1. get number of lane infos
+        String line,stationname;
+        line=sc.nextLine();
+        numlines=Integer.parseInt(line);
+        ArrayList<String> order;
+        int linenum;
+        for(int i=0;i<numlines;i++){
             line=sc.nextLine();
-            numlines=Integer.parseInt(line);
-            ArrayList<String> order;
-            int linenum;
-            for(int i=0;i<numlines;i++){
-                line=sc.nextLine();
-                tokenizer = new StringTokenizer(line, ",");
-                order=new ArrayList<>();
-                linenum=Integer.parseInt(tokenizer.nextToken();
-                while(tokenizer.hasMoreTokens()){//get stations
-                    stationname=tokenizer.nextToken();
-                    order.add(stationname);//add to order
-                    addstation(stationname,linenum);
+            tokenizer = new StringTokenizer(line, ",");
+            order=new ArrayList<>();
+            linenum=Integer.parseInt(tokenizer.nextToken());
+            while(tokenizer.hasMoreTokens()){//get stations
+                stationname=tokenizer.nextToken();
+                order.add(stationname);//add to order
+                addstation(stationname,linenum);
+            }
+            stationorder.put(linenum,order);
+        }//first part complete
+        String updown;
+        int first,last,intv,numstation;
+        MetroClass car;
+        for(int i=0;i<numlines;i++){
+            line=sc.nextLine();
+            tokenizer = new StringTokenizer(line, ",");
+            //up
+            linenum=Integer.parseInt(tokenizer.nextToken());
+            order=stationorder.get(linenum);
+            updown=tokenizer.nextToken();
+            first=Integer.parseInt(tokenizer.nextToken());
+            last=Integer.parseInt(tokenizer.nextToken());
+            intv=Integer.parseInt(tokenizer.nextToken());
+            for(int j=first;j<=last;j+=intv){
+                car=new MetroClass();
+                numstation=order.size();
+                for(int k=0;k<numstation;k++) {
+                    stationmap.get(order.get(k)).addcar(linenum, updown, j, car);
                 }
-                stationorder.put(linenum,order);
-            }//first part complete
-            String updown;
-            int first,last,intv,numstation;
-            MetroClass car;
-            for(int i=0;i<numlines;i++){
-                line=sc.nextLine();
-                tokenizer = new StringTokenizer(line, ",");
-                //up
-                linenum=Integer.parseInt(tokenizer.nextToken());
-                order=stationorder.get(linenum);
-                updown=tokenizer.nextToken();
-                first=Integer.parseInt(tokenizer.nextToken());
-                last=Integer.parseInt(tokenizer.nextToken());
-                intv=Integer.parseInt(tokenizer.nextToken());
-                for(int j=first;j<=last;j+=intv){
-                    car=new MetroClass();
-                    numstation=order.size();
-                    for(int k=0;k<numstation;k++) {
-                        stationmap.get(order.get(k)).addcar(linenum, updown, j, car);
-                    }
+            }
+            //down - reverse order
+            line=sc.nextLine();
+            tokenizer = new StringTokenizer(line, ",");
+            //up
+            linenum=Integer.parseInt(tokenizer.nextToken());
+            order=stationorder.get(linenum);
+            updown=tokenizer.nextToken();
+            first=Integer.parseInt(tokenizer.nextToken());
+            last=Integer.parseInt(tokenizer.nextToken());
+            intv=Integer.parseInt(tokenizer.nextToken());
+            for(int j=first;j<=last;j+=intv){
+                car=new MetroClass();
+                numstation=order.size();
+                for(int k=numstation-1;k>0;k--) {
+                    stationmap.get(order.get(k)).addcar(linenum, updown, j, car);
                 }
-                //down - reverse order
-                line=sc.nextLine();
-                tokenizer = new StringTokenizer(line, ",");
-                //up
-                linenum=Integer.parseInt(tokenizer.nextToken());
-                order=stationorder.get(linenum);
-                updown=tokenizer.nextToken();
-                first=Integer.parseInt(tokenizer.nextToken());
-                last=Integer.parseInt(tokenizer.nextToken());
-                intv=Integer.parseInt(tokenizer.nextToken());
-                for(int j=first;j<=last;j+=intv){
-                    car=new MetroClass();
-                    numstation=order.size();
-                    for(int k=numstation-1;k>0;k--) {
-                        stationmap.get(order.get(k)).addcar(linenum, updown, j, car);
-                    }
-                }
-            }//completed stations
-            //get paths
+            }
+        }//completed stations
+        //get paths
 
-            sc.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        mFile = null;
+        sc.close();
+        //mFile = null;
         return null;
     }
 
@@ -132,4 +130,6 @@ public class StationHolder extends AsyncTask< Void, Void, Void> {
         //mTextView.setText(mTextView.getText().toString() + "\n" + mText);
        // mTextView = null;
     }
+
+
 }
