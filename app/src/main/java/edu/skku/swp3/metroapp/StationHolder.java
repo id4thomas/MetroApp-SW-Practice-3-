@@ -67,9 +67,11 @@ public class StationHolder extends AsyncTask< Void, Void, Void> {
         int linenum;
         for(int i=0;i<numlines;i++){
             line=sc.nextLine();
+            Log.i("Reading First Part", line);
             tokenizer = new StringTokenizer(line, ",");
             order=new ArrayList<>();
             linenum=Integer.parseInt(tokenizer.nextToken());
+            stationorder.put(linenum,new ArrayList<String>());
             while(tokenizer.hasMoreTokens()){//get stations
                 stationname=tokenizer.nextToken();
                 order.add(stationname);//add to order
@@ -82,6 +84,7 @@ public class StationHolder extends AsyncTask< Void, Void, Void> {
         MetroClass car;
         for(int i=0;i<numlines;i++){
             line=sc.nextLine();
+            Log.i("Reading second part ", line);
             tokenizer = new StringTokenizer(line, ",");
             //up
             linenum=Integer.parseInt(tokenizer.nextToken());
@@ -116,7 +119,7 @@ public class StationHolder extends AsyncTask< Void, Void, Void> {
             }
         }//completed stations
         //get paths
-
+        Log.i("Finished Reading db", "Read complete");
         sc.close();
         //mFile = null;
         return null;

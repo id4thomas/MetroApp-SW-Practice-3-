@@ -40,9 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
         public void onClick(View v)
         {
-            c1=new CombinationClass();
+            /*c1=new CombinationClass();
             FileIn fileTask = new FileIn(getApplicationContext(), "schedule.csv",timetable,testfile);
-            fileTask.execute();
+            fileTask.execute();*/
         }
     };
 
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         public void onClick(View v)
         {
-            String[] wow = new String[1];
+           /* String[] wow = new String[1];
             FileOut fileTask = new FileOut(getApplicationContext(), "schedule.csv");
             ArrayList<String> strings = new ArrayList<>(); //1줄당 어레이리스트 아이템 한개i
             String data_example="1,2,300,1200,30\n,2,2,330,1230,20";
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             while (tokenizer.hasMoreTokens()) {
                 strings.add(tokenizer.nextToken());
             }
-            fileTask.execute(strings.toArray(wow));//리턴해야할 데이터 타입이 스트링 배열이라고선언 안하면 오브젝트 배열로 넘어감
+            fileTask.execute(strings.toArray(wow));//리턴해야할 데이터 타입이 스트링 배열이라고선언 안하면 오브젝트 배열로 넘어감*/
         }
     };
 
@@ -84,21 +84,11 @@ public class MainActivity extends AppCompatActivity {
         readfile.setOnClickListener(readlistener);
         writefile.setOnClickListener(writelistener);
         timetable= new HashMap<Integer,MetroClass>();
+        final StationHolder stations=new StationHolder(getApplicationContext());
         testbutton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                MetroClass f,t;
-                f=timetable.get(1);
-                t=timetable.get(2);
-                c1=new CombinationClass();
-                c1.instantiate(f,t);
-                Calendar rightNow = Calendar.getInstance();
-                int currentHour = rightNow.get(Calendar.HOUR_OF_DAY);
-                int currentMinute= rightNow.get(Calendar.MINUTE);
-                int x=t.closest(60*currentHour+currentMinute,false);//암사방편
-                String info;
-                info="You should get on "+String.valueOf(x/60)+":"+String.valueOf(x%60)+" train";
-                testoutput.setText(info);
+                stations.execute();
             }
         });
         btnList.setOnClickListener(new View.OnClickListener() {

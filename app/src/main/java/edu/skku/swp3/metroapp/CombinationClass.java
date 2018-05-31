@@ -14,7 +14,7 @@ public class CombinationClass {
         s2=t2;
         metromap=mm;
     }
-
+/*
     public void answer(int currenttime){
         boolean samelane=false;
         int lane1=0,lane2=0;
@@ -86,7 +86,7 @@ public class CombinationClass {
         s=metromap.get(source);
         return s.samelane.get(dest);
 
-    }
+    }*/
 
 
 }
